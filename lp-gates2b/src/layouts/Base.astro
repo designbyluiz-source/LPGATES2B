@@ -39,22 +39,16 @@ const ogImage = new URL('/og.jpg', base).toString();
       }, 4000);
     </script>
 
-    <!-- LCP: a imagem do hero é o maior elemento above the fold -->
+    <!-- Imagem do hero: precisa começar a baixar antes do parser chegar nela.
+         O imagesrcset/imagesizes tem de ser idêntico ao do <img> em Hero.astro,
+         senão o navegador baixa uma variante aqui e outra depois. -->
     <link
       rel="preload"
       as="image"
-      href="/img/hero-f1-1600.webp"
       type="image/webp"
       fetchpriority="high"
-      media="(max-width: 1023px)"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="/img/hero-f1-2400.webp"
-      type="image/webp"
-      fetchpriority="high"
-      media="(min-width: 1024px)"
+      imagesrcset="/img/hero-f1-640.webp 640w, /img/hero-f1-900.webp 900w, /img/hero-f1-1200.webp 1200w, /img/hero-f1-1600.webp 1600w, /img/hero-f1-2400.webp 2400w"
+      imagesizes="100vw"
     />
 
     <!-- Fontes: precarregadas para evitar salto tipográfico -->

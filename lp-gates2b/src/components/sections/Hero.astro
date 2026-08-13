@@ -9,10 +9,16 @@ import { hero } from '../../data/content';
   <!-- Imagem de fundo (F1 noturno, tratado nas cores da marca).
        z-0 (e não -z-*): índice negativo jogaria a imagem atrás do bg da seção. -->
   <div class="absolute inset-0 z-0 overflow-hidden">
-    <picture data-hero-media class="block h-full w-full">
-      <source media="(min-width: 1024px)" srcset="/img/hero-f1-2400.webp" />
+    <div data-hero-media class="block h-full w-full">
+      {/* srcset em vez de <picture> com media query: o navegador escolhe pela
+          largura real E pelo DPR. Um celular de 412px com DPR 1,75 precisa de
+          ~720px — servir 1600px ali eram 40 KB jogados fora no caminho do LCP.
+          O preload no Base.astro repete este srcset, senão a imagem baixa duas
+          vezes. */}
       <img
         src="/img/hero-f1-1600.webp"
+        srcset="/img/hero-f1-640.webp 640w, /img/hero-f1-900.webp 900w, /img/hero-f1-1200.webp 1200w, /img/hero-f1-1600.webp 1600w, /img/hero-f1-2400.webp 2400w"
+        sizes="100vw"
         alt=""
         aria-hidden="true"
         width="2400"
@@ -21,7 +27,7 @@ import { hero } from '../../data/content';
         decoding="async"
         class="hero-media-in h-full w-full scale-105 object-cover object-center"
       />
-    </picture>
+    </div>
     <!-- Gradientes de legibilidade -->
     <div class="absolute inset-0 bg-linear-to-t from-ink-950 via-ink-950/62 to-ink-950/25"></div>
     <div

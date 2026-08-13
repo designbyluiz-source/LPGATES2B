@@ -3,7 +3,7 @@
 Landing page da **Gates2B — Infraestrutura de Monetização Global**.
 Astro + Tailwind CSS v4 + GSAP (ScrollTrigger, SplitText).
 
-**Lighthouse:** 100/100/100/100 no desktop · 98/100/100/100 no mobile.
+**Lighthouse:** 100/100/100/100 no desktop · 99/100/100/100 no mobile.
 
 ---
 
@@ -125,12 +125,13 @@ Medido com Lighthouse (mobile: 4x CPU + 4G lento; desktop: sem throttling).
 
 | | Mobile | Desktop |
 |---|---|---|
-| Performance | 98 | 100 |
+| Performance | 99 | 100 |
 | Acessibilidade | 100 | 100 |
 | Boas práticas | 100 | 100 |
 | SEO | 100 | 100 |
-| FCP | 1,2 s | 0,3 s |
-| LCP | 2,3 s | 0,6 s |
+| FCP | 1,1 s | 0,3 s |
+| LCP | 2,0 s | 0,5 s |
+| Speed Index | 1,4 s | 0,9 s |
 | TBT | 0 ms | 0 ms |
 | CLS | 0 | 0 |
 
@@ -144,12 +145,38 @@ O que sustenta esses números — mexer nestes pontos é o que derruba a nota:
    criar uma tarefa longa. É o que mantém o TBT em zero.
 4. **O SplitText roda por seção**, quando o título chega perto da viewport —
    não nos 12 títulos de uma vez no boot.
-5. **A imagem do hero tem `preload` com `fetchpriority="high"`**, em duas
-   larguras por media query.
+5. **A imagem do hero tem `preload` com `fetchpriority="high"`.** O
+   `imagesrcset`/`imagesizes` do preload precisa ser idêntico ao do `<img>` em
+   `Hero.astro` — se divergirem, o navegador baixa duas variantes.
 6. **Fontes com subset latino** (51 KB no total, contra 113 KB do arquivo
    completo), self-hosted, com `preload`.
 7. **Toda imagem tem `width`/`height`**, inclusive os SVGs. É o que mantém o
    CLS em zero.
+8. **Imagens responsivas com `srcset` + `sizes`.** O hero tem cinco larguras
+   (640 a 2400 px). Um celular de 412 px com DPR 1,75 pede ~720 px e recebe a
+   variante de 900: 25 KB em vez de 65 KB, no elemento mais crítico da página.
+
+### Medido e descartado — não vale reintroduzir
+
+Duas otimizações plausíveis foram testadas com 5 amostras cada (mobile) e
+revertidas por não sustentarem ganho:
+
+- **Embutir a fonte do título em base64 no CSS,** para tirar o `@font-face` do
+  caminho crítico do LCP. Custava 14 KB no HTML e não mudou o resultado: o
+  arquivo externo já chegava em 148 ms, antes do primeiro paint. O FCP
+  observado piorou (377 ms contra 312 ms) por causa do HTML maior.
+- **Encurtar a intro do hero** (atrasos de 0,15 s para 0,06 s). LCP observado
+  de 325 ms contra 312 ms — dentro do ruído. Não compensa mexer na coreografia
+  por isso.
+
+A folga real que sobra é o CSS: ~50 KB crus de utilitários de fato usados.
+Reduzir exige consolidar classes repetidas em componentes, com risco de
+regressão visual nas 14 seções. Em produção, Vercel e Netlify servem Brotli, o
+que já leva o HTML de ~26 KB (gzip) para ~21 KB sem tocar no código.
+
+Vale separar o número simulado do real: **sem throttling, FCP e LCP observados
+são ambos ~300 ms, no mesmo frame.** Os 2,0 s da tabela são a projeção do
+Lighthouse para 4G lento com CPU quatro vezes mais devagar.
 
 ### Cache
 

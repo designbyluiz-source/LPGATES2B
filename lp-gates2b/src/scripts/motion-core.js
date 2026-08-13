@@ -395,32 +395,68 @@ function initMarquees() {
   document.querySelectorAll('[data-marquee]').forEach((wrap) => {
     const track = wrap.querySelector('.marquee-track');
     if (!track) return;
+
     const speed = parseFloat(wrap.dataset.speed || '38');
     const dir = wrap.dataset.direction === 'right' ? 1 : -1;
-
-    // duplica conteúdo para loop contínuo
     const original = track.innerHTML;
-    track.innerHTML = original + original;
+    let tween = null;
 
-    if (REDUCED) return;
+    const build = () => {
+      if (tween) tween.kill();
+      gsap.set(track, { x: 0 });
 
-    const half = () => track.scrollWidth / 2;
-    const tween = gsap.to(track, {
-      x: () => dir * half(),
-      duration: () => half() / speed,
-      ease: 'none',
-      repeat: -1,
-      modifiers: {
-        x: (x) => {
-          const h = half();
-          const v = parseFloat(x) % h;
-          return (dir < 0 ? v : v - h) + 'px';
-        },
-      },
+      // Mede DUAS cópias e divide por dois. Medir uma cópia isolada deixaria de
+      // fora o `gap` que o flex insere entre uma cópia e a seguinte, e o loop
+      // saltaria a cada volta pela diferença de um gap.
+      track.innerHTML = original + original;
+      const unit = track.scrollWidth / 2;
+      if (!unit) return;
+
+      // Repete até cobrir a viewport com uma cópia inteira de folga. Duas
+      // cópias fixas não bastam: em telas largas a faixa acaba antes da borda
+      // e abre um vazio no fim de cada ciclo.
+      const copies = Math.ceil(window.innerWidth / unit) + 2;
+      let html = original;
+      for (let i = 1; i < copies; i++) {
+        // display:contents preserva o layout do flex (os filhos continuam sendo
+        // itens do track); aria-hidden evita que o leitor de tela leia o mesmo
+        // conteúdo uma vez por cópia.
+        html += `<span aria-hidden="true" style="display:contents">${original}</span>`;
+      }
+      track.innerHTML = html;
+
+      if (REDUCED) return;
+
+      // Desloca exatamente uma cópia e repete. A cópia seguinte cai no lugar
+      // exato da anterior, então a emenda é invisível — sem precisar de
+      // modifiers nem de matemática de resto.
+      const from = dir < 0 ? 0 : -unit;
+      gsap.set(track, { x: from });
+      tween = gsap.to(track, {
+        x: from + dir * unit,
+        duration: unit / speed,
+        ease: 'none',
+        repeat: -1,
+      });
+    };
+
+    build();
+
+    // A quantidade de cópias depende da largura da janela.
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(build, 200);
     });
 
-    wrap.addEventListener('mouseenter', () => gsap.to(tween, { timeScale: 0.25, duration: 0.5 }));
-    wrap.addEventListener('mouseleave', () => gsap.to(tween, { timeScale: 1, duration: 0.5 }));
+    if (!REDUCED) {
+      wrap.addEventListener('mouseenter', () => {
+        if (tween) gsap.to(tween, { timeScale: 0.25, duration: 0.4 });
+      });
+      wrap.addEventListener('mouseleave', () => {
+        if (tween) gsap.to(tween, { timeScale: 1, duration: 0.4 });
+      });
+    }
   });
 }
 

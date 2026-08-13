@@ -1,0 +1,71 @@
+---
+import { paraQuem as c } from '../../data/content';
+---
+
+<section
+  id="para-quem"
+  data-theme-section="light"
+  class="relative overflow-hidden bg-paper py-24 text-ink-950 lg:py-36"
+>
+  <div class="container-lp relative">
+    <div class="max-w-3xl">
+      <h2 data-split="lines" class="display-lg text-ink-950">{c.title}</h2>
+    </div>
+  </div>
+
+  <!-- Faixa infinita de segmentos. É decorativa: os mesmos cinco segmentos
+       aparecem logo abaixo, em cards legíveis. Fica fora da árvore de
+       acessibilidade para não duplicar conteúdo para leitores de tela. -->
+  <div
+    data-marquee
+    data-speed="42"
+    aria-hidden="true"
+    class="relative mt-14 overflow-hidden border-y border-ink-950/8 py-6 lg:mt-20"
+  >
+    <div class="marquee-track items-center gap-8 lg:gap-12">
+      {
+        c.items.map((item) => (
+          <span class="flex shrink-0 items-center gap-8 lg:gap-12">
+            <!-- 44%: é o mínimo que garante 3:1 sobre branco em texto grande (WCAG AA).
+                 A 41% o contraste dá 2,85 e reprova por pouco. -->
+            <span class="font-display text-[clamp(1.75rem,3.4vw,3rem)] leading-none font-medium tracking-[-0.04em] whitespace-nowrap text-ink-950/44 transition-colors duration-500 hover:text-ink-950">
+              {item.title}
+            </span>
+            <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />
+          </span>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="container-lp relative">
+    <div
+      data-stagger-group="0.08"
+      class="mt-14 grid gap-5 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3"
+    >
+      {
+        c.items.map((item, i) => (
+          <article
+            data-anim="fade-up"
+            class="card-light group flex flex-col justify-between p-7 lg:min-h-[13rem]"
+          >
+            <div class="flex items-start justify-between">
+              <span class="eyebrow text-ink-950/25 transition-colors duration-500 group-hover:text-brand-500">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span class="h-8 w-8 rounded-full border border-ink-950/8 transition-all duration-500 group-hover:border-brand-500 group-hover:bg-brand-500" />
+            </div>
+            <div class="mt-10">
+              <h3 class="font-display text-xl font-medium tracking-tight text-ink-950">
+                {item.title}
+              </h3>
+              <p class="mt-2.5 text-[0.9375rem] leading-relaxed font-light text-ink-950/55">
+                {item.description}
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

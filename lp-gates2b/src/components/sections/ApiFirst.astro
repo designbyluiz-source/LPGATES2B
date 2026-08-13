@@ -1,0 +1,147 @@
+---
+import { apiFirst as c } from '../../data/content';
+
+/** Colorização leve das linhas de código, sem dependências externas */
+function tone(line: string, kind: 'request' | 'response') {
+  if (/^(POST|GET|PUT|DELETE)/.test(line)) return 'text-brand-300 font-semibold';
+  if (/^\d{3} /.test(line)) return 'text-emerald-300 font-semibold';
+  if (/^[A-Z][A-Za-z-]+:/.test(line)) return 'text-white/35';
+  if (/"[a-z_]+":/.test(line)) return 'text-white/80';
+  return kind === 'response' ? 'text-white/55' : 'text-white/55';
+}
+---
+
+<section
+  id="api-first"
+  data-theme-section="light"
+  class="relative overflow-hidden bg-paper py-24 text-ink-950 lg:py-36"
+>
+  <div
+    class="grid-lines-light pointer-events-none absolute inset-0 opacity-60"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container-lp relative">
+    <div class="max-w-3xl">
+      <h2 data-split="lines" class="display-lg text-ink-950">{c.title}</h2>
+      <p data-anim="fade-up" class="lead mt-7 max-w-xl text-ink-950/60">{c.description}</p>
+    </div>
+
+    <div class="mt-14 grid gap-10 lg:mt-20 lg:grid-cols-[0.85fr_minmax(0,1fr)] lg:gap-16">
+      <!-- Recursos -->
+      <div data-stagger-group class="lg:pt-2">
+        {
+          c.items.map((item, i) => (
+            <div
+              data-anim="fade-up"
+              class="group flex gap-6 border-t border-ink-950/10 py-6 last:border-b"
+            >
+              <span class="eyebrow mt-1.5 shrink-0 text-ink-950/25 transition-colors duration-500 group-hover:text-brand-500">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <h3 class="font-display text-lg font-medium tracking-tight text-ink-950">
+                  {item.title}
+                </h3>
+                <p class="mt-2 max-w-sm text-[0.9375rem] leading-relaxed font-light text-ink-950/55">
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Painel de código -->
+      <div data-tabs data-anim="scale-in" class="min-w-0 lg:sticky lg:top-28 lg:self-start">
+        <div
+          class="overflow-hidden rounded-2xl border border-ink-950/10 bg-ink-950 shadow-[0_50px_120px_-60px_rgba(15,20,31,.7)]"
+        >
+          <div class="flex items-center gap-1 border-b border-white/8 bg-white/2 px-4 py-3">
+            <button
+              data-tab-btn="request"
+              type="button"
+              class="tab rounded-full px-3.5 py-1.5 font-mono text-[0.6875rem] tracking-wider transition-colors duration-300"
+            >
+              REQUEST
+            </button>
+            <button
+              data-tab-btn="response"
+              type="button"
+              class="tab rounded-full px-3.5 py-1.5 font-mono text-[0.6875rem] tracking-wider transition-colors duration-300"
+            >
+              RESPONSE
+            </button>
+            <span class="ml-auto font-mono text-[0.625rem] tracking-wider text-white/25">
+              api.gates2b.com
+            </span>
+          </div>
+
+          <div
+            data-tab-panel="request"
+            class="overflow-x-auto p-5 font-mono text-[0.78125rem] leading-[1.75] lg:p-6"
+          >
+            {
+              c.code.request.map((l) => (
+                <div data-code-line class:list={['whitespace-pre', tone(l, 'request')]}>
+                  {l || ' '}
+                </div>
+              ))
+            }
+          </div>
+
+          <div
+            data-tab-panel="response"
+            hidden
+            class="overflow-x-auto p-5 font-mono text-[0.78125rem] leading-[1.75] lg:p-6"
+          >
+            {
+              c.code.response.map((l) => (
+                <div data-code-line class:list={['whitespace-pre', tone(l, 'response')]}>
+                  {l || ' '}
+                </div>
+              ))
+            }
+          </div>
+
+          <!-- Eventos -->
+          <div class="border-t border-white/8 bg-white/2 px-4 py-3.5">
+            <div class="mb-2.5 flex items-center gap-2">
+              <span class="h-1.5 w-1.5 rounded-full bg-brand-300"></span>
+              <span class="eyebrow text-white/35">Eventos disponíveis</span>
+            </div>
+            <div data-marquee data-speed="26" class="relative overflow-hidden">
+              <div class="marquee-track gap-2">
+                {
+                  c.events.map((e) => (
+                    <span class="shrink-0 rounded-full border border-white/10 px-3 py-1.5 font-mono text-[0.6875rem] whitespace-nowrap text-white/50">
+                      {e}
+                    </span>
+                  ))
+                }
+              </div>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 w-16 bg-linear-to-l from-ink-950 to-transparent"
+              >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tab {
+    color: color-mix(in srgb, #fff 35%, transparent);
+  }
+  .tab:hover {
+    color: color-mix(in srgb, #fff 70%, transparent);
+  }
+  .tab.is-active {
+    background: var(--color-brand-500);
+    color: #fff;
+  }
+</style>

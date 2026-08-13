@@ -1,0 +1,94 @@
+---
+import { documentacao as c } from '../../data/content';
+import Icon from '../Icon.astro';
+
+const endpoints = [
+  { method: 'POST', path: '/v1/payments' },
+  { method: 'GET', path: '/v1/payments/:id' },
+  { method: 'POST', path: '/v1/settlements' },
+  { method: 'GET', path: '/v1/settlements' },
+  { method: 'POST', path: '/v1/transfers' },
+  { method: 'POST', path: '/v1/webhooks' },
+];
+---
+
+<section
+  id="documentacao"
+  data-theme-section="light"
+  class="relative overflow-hidden bg-paper-100 py-24 text-ink-950 lg:py-36"
+>
+  <div class="container-lp relative">
+    <div class="grid items-center gap-14 lg:grid-cols-[1fr_1fr] lg:gap-20">
+      <div>
+        <h2 data-split="lines" class="display-lg text-ink-950">{c.title}</h2>
+
+        <ul data-stagger-group="0.08" class="mt-10 space-y-3">
+          {
+            c.bullets.map((b) => (
+              <li data-anim="fade-up" class="flex items-center gap-4">
+                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-500 text-white">
+                  <Icon name="check" class="h-3.5 w-3.5" />
+                </span>
+                <span class="font-display text-lg font-medium tracking-tight text-ink-950 lg:text-xl">
+                  {b}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p data-anim="fade-up" class="mt-8 max-w-md text-base leading-relaxed font-light text-ink-950/55">
+          {c.closing}
+        </p>
+
+        <div data-anim="fade-up" class="mt-10">
+          <a href={c.cta.href} class="btn btn-dark" data-magnetic="0.18">
+            <span>{c.cta.label}</span>
+            <Icon name="arrow" class="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+
+      <!-- Referência de API -->
+      <div data-anim="scale-in" class="card-light overflow-hidden !p-0">
+        <div class="flex items-center justify-between border-b border-ink-950/8 px-5 py-4">
+          <div class="flex items-center gap-3">
+            <img width="403" height="427" src="/logos/icone-azul.svg" alt="" aria-hidden="true" class="h-4 w-auto" />
+            <span class="font-mono text-[0.6875rem] tracking-wider text-ink-950/45">
+              docs.gates2b.com
+            </span>
+          </div>
+          <span class="eyebrow rounded-full bg-brand-50 px-2.5 py-1 text-brand-600">v1</span>
+        </div>
+
+        <div class="divide-y divide-ink-950/6">
+          {
+            endpoints.map((e) => (
+              <div class="group flex items-center gap-4 px-5 py-3.5 transition-colors duration-300 hover:bg-brand-50/60">
+                <span
+                  class:list={[
+                    'w-12 shrink-0 font-mono text-[0.625rem] font-semibold tracking-wider',
+                    e.method === 'POST' ? 'text-brand-600' : 'text-emerald-600',
+                  ]}
+                >
+                  {e.method}
+                </span>
+                <span class="font-mono text-[0.8125rem] text-ink-950/70">{e.path}</span>
+                <span class="ml-auto text-ink-950/20 transition-all duration-500 group-hover:translate-x-1 group-hover:text-brand-500">
+                  <Icon name="arrow" class="h-4 w-4" />
+                </span>
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="flex items-center gap-3 border-t border-ink-950/8 bg-white px-5 py-4">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
+          <span class="font-mono text-[0.6875rem] text-ink-950/45">
+            llms.txt · contexto para assistentes de código
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

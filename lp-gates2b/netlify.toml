@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Os headers de cache ficam em public/_headers, que o Netlify lê do publish dir.
+# Este arquivo cuida apenas do build.
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+  [plugins.inputs.thresholds]
+    performance = 0.95
+    accessibility = 1.0
+    best-practices = 1.0
+    seo = 1.0

@@ -1,0 +1,69 @@
+---
+import { seguranca as c } from '../../data/content';
+import Icon from '../Icon.astro';
+---
+
+<section id="seguranca" class="texture relative overflow-hidden bg-ink-900 py-24 lg:py-36">
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute -bottom-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-35 blur-[130px]"
+    style="background: radial-gradient(circle, rgba(52,91,166,.55), transparent 68%)"
+  >
+  </div>
+
+  <div class="container-lp relative">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 data-split="lines" class="display-lg text-white">{c.title}</h2>
+      <div data-stagger-group class="mt-8 space-y-4">
+        {
+          c.paragraphs.map((p, i) => (
+            <p
+              data-anim="fade-up"
+              class:list={[
+                'leading-relaxed',
+                i === 0 ? 'text-lg text-white/75' : 'text-base font-light text-white/50',
+              ]}
+            >
+              {p}
+            </p>
+          ))
+        }
+      </div>
+    </div>
+
+    <div
+      data-stagger-group="0.1"
+      class="mt-16 grid gap-5 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4"
+    >
+      {
+        c.items.map((item) => (
+          <article
+            data-anim="fade-up"
+            data-tilt="5"
+            class="card-dark group relative overflow-hidden p-7 lg:min-h-[15rem]"
+          >
+            <div
+              data-tilt-glow
+              aria-hidden="true"
+              class="pointer-events-none absolute -inset-20 opacity-0 blur-3xl transition-opacity duration-500"
+              style="background: radial-gradient(circle at center, rgba(52,91,166,.35), transparent 60%)"
+            />
+            <div class="relative">
+              <div
+                class="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/4 text-brand-300 transition-colors duration-500 group-hover:border-brand-400/50 group-hover:bg-brand-500/20"
+              >
+                <Icon name={item.icon} class="h-5 w-5" draw />
+              </div>
+              <h3 class="mt-7 font-display text-lg font-medium tracking-tight text-white">
+                {item.title}
+              </h3>
+              <p class="mt-2.5 text-[0.875rem] leading-relaxed font-light text-white/45">
+                {item.description}
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

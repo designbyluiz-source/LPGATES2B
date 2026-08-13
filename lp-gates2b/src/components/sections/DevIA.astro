@@ -1,0 +1,110 @@
+---
+import { devIA as c } from '../../data/content';
+---
+
+<section id="dev-ia" class="texture relative overflow-hidden bg-ink-950 py-24 lg:py-36">
+  <div class="grid-lines pointer-events-none absolute inset-0 opacity-30" aria-hidden="true"></div>
+
+  <div class="container-lp relative">
+    <div class="grid gap-14 lg:grid-cols-[1fr_minmax(0,1fr)] lg:items-start lg:gap-20">
+      <div>
+        <h2 data-split="lines" class="display-lg text-white">{c.title}</h2>
+        <div data-stagger-group class="mt-8 space-y-4">
+          {
+            c.paragraphs.map((p, i) => (
+              <p
+                data-anim="fade-up"
+                class:list={[
+                  'leading-relaxed',
+                  i === 0 ? 'text-lg text-white/80' : 'text-base font-light text-white/50',
+                ]}
+              >
+                {p}
+              </p>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Terminal -->
+      <div
+        data-anim="scale-in"
+        class="min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-ink-900/90 shadow-[0_40px_120px_-60px_rgba(52,91,166,.7)] backdrop-blur-xl lg:mt-14"
+      >
+        <div class="flex items-center gap-3 border-b border-white/8 bg-white/2 px-5 py-3.5">
+          <div class="flex gap-1.5">
+            <span class="h-2.5 w-2.5 rounded-full bg-white/12"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-white/12"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-brand-400/70"></span>
+          </div>
+          <span class="ml-2 font-mono text-[0.6875rem] tracking-wider text-white/35">
+            llms.txt · contexto para IA
+          </span>
+        </div>
+
+        <div data-terminal class="p-5 font-mono text-[0.78125rem] leading-relaxed lg:p-6">
+          {
+            c.terminalLines.map((line) => (
+              <div
+                data-terminal-line
+                data-prompt={line.prompt ? '' : undefined}
+                data-text={line.text}
+                class:list={[
+                  'flex gap-2 whitespace-pre-wrap',
+                  line.prompt ? 'text-white' : line.ok ? 'text-brand-300' : 'text-white/45',
+                ]}
+              >
+                {line.prompt && <span class="shrink-0 text-brand-400">$</span>}
+                <span data-terminal-text>{line.text}</span>
+              </div>
+            ))
+          }
+          <div class="mt-1 flex gap-2 text-white">
+            <span class="shrink-0 text-brand-400">$</span>
+            <span data-terminal-cursor class="inline-block h-4 w-2 bg-brand-300"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ferramentas -->
+    <div
+      data-stagger-group="0.09"
+      class="mt-16 grid gap-4 sm:grid-cols-2 lg:mt-24 lg:grid-cols-4"
+    >
+      {
+        c.tools.map((t) => (
+          <article data-anim="fade-up" class="card-dark group p-6">
+            <div class="flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/4 font-display text-[0.8125rem] font-semibold text-brand-300 transition-colors duration-500 group-hover:bg-brand-500 group-hover:text-white">
+                {t.name.charAt(0)}
+              </span>
+              <h3 class="font-display text-base font-medium tracking-tight text-white">{t.name}</h3>
+            </div>
+            <p class="mt-4 text-[0.875rem] leading-relaxed font-light text-white/45">
+              {t.description}
+            </p>
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- Callout -->
+    <div
+      data-anim="fade-up"
+      class="mt-8 flex flex-col items-start justify-between gap-6 rounded-2xl border border-brand-500/25 bg-linear-to-br from-brand-500/14 to-transparent p-7 lg:flex-row lg:items-center lg:p-9"
+    >
+      <div class="max-w-2xl">
+        <h3 class="font-display text-xl font-medium tracking-tight text-white lg:text-2xl">
+          {c.callout.title}
+        </h3>
+        <p class="mt-2.5 text-[0.9375rem] leading-relaxed font-light text-white/55">
+          {c.callout.description}
+        </p>
+      </div>
+      <a href={c.callout.cta.href} class="btn btn-light shrink-0" data-magnetic="0.16">
+        <span>{c.callout.cta.label}</span>
+      </a>
+    </div>
+  </div>
+</section>

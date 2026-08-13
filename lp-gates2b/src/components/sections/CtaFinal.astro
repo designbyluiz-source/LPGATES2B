@@ -1,0 +1,52 @@
+---
+import { ctaFinal as c } from '../../data/content';
+---
+
+<section id="contato" class="texture relative overflow-hidden bg-ink-950 py-28 lg:py-40">
+  <!-- Brilho azul da marca -->
+  <div
+    aria-hidden="true"
+    data-parallax
+    data-parallax-amount="8"
+    class="pointer-events-none absolute inset-x-0 top-0 h-full"
+    style="background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(52,91,166,.55) 0%, rgba(52,91,166,.12) 45%, transparent 72%)"
+  >
+  </div>
+  <div class="grid-lines pointer-events-none absolute inset-0 opacity-30" aria-hidden="true"></div>
+
+  <div class="container-lp relative text-center">
+    <!-- Logo vertical como grafismo -->
+    <img width="403" height="427"
+      data-anim="fade"
+      src="/logos/icone-branco.svg"
+      alt=""
+      aria-hidden="true"
+      class="mx-auto h-12 w-auto opacity-25 lg:h-14"
+    />
+
+    <h2 data-split="lines" class="display-xl mx-auto mt-10 max-w-4xl text-white">
+      {c.title}
+    </h2>
+
+    <p data-anim="fade-up" class="lead mx-auto mt-8 max-w-2xl text-white/65">
+      {c.description}
+    </p>
+
+    <p
+      data-anim="fade-up"
+      data-delay="0.1"
+      class="mx-auto mt-10 font-display text-xl leading-snug font-light tracking-tight text-brand-200 lg:text-2xl"
+    >
+      {c.claim.map((line) => <span class="block">{line} </span>)}
+    </p>
+
+    <div data-anim="fade-up" data-delay="0.2" class="mt-12 flex flex-wrap justify-center gap-3">
+      <a href={c.primaryCta.href} class="btn btn-light !px-8 !py-4" data-magnetic="0.2">
+        <span>{c.primaryCta.label}</span>
+      </a>
+      <a href={c.secondaryCta.href} class="btn btn-ghost-light !px-8 !py-4" data-magnetic="0.16">
+        <span>{c.secondaryCta.label}</span>
+      </a>
+    </div>
+  </div>
+</section>

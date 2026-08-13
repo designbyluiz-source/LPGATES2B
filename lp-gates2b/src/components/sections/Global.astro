@@ -1,0 +1,114 @@
+---
+import { global as c } from '../../data/content';
+---
+
+<section id="global" class="texture relative overflow-hidden bg-ink-900 py-24 lg:py-36">
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute top-1/2 right-0 h-[600px] w-[600px] translate-x-1/3 -translate-y-1/2 rounded-full opacity-40 blur-[130px]"
+    style="background: radial-gradient(circle, rgba(52,91,166,.6), transparent 68%)"
+  >
+  </div>
+
+  <div class="container-lp relative">
+    <div class="grid items-center gap-16 lg:grid-cols-[1fr_0.95fr] lg:gap-20">
+      <div>
+        <h2 data-split="lines" class="display-lg text-white">{c.title}</h2>
+        <div data-stagger-group class="mt-8 space-y-4">
+          {
+            c.paragraphs.map((p, i) => (
+              <p
+                data-anim="fade-up"
+                class:list={[
+                  'leading-relaxed',
+                  i === 0 ? 'text-lg text-white/80' : 'text-base font-light text-white/50',
+                ]}
+              >
+                {p}
+              </p>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Órbita de moedas sobre a imagem (p-10 = folga para os chips) -->
+      <div class="relative p-10">
+        <div
+          data-anim="scale-in"
+          class="relative aspect-square overflow-hidden rounded-full border border-white/10"
+        >
+          <img
+            src="/img/global-f1-1200.webp"
+            alt="Carro de corrida em pista, imagem tratada nas cores da marca Gates2B"
+            width="1200"
+            height="1200"
+            loading="lazy" decoding="async"
+            class="h-full w-full object-cover"
+          />
+          <div class="absolute inset-0 bg-ink-950/45"></div>
+          <div
+            class="absolute inset-0"
+            style="background: radial-gradient(circle at center, transparent 30%, rgba(4,6,12,.85) 100%)"
+          >
+          </div>
+
+          <!-- Centro -->
+          <div class="absolute inset-0 grid place-items-center">
+            <div class="text-center">
+              <img width="403" height="427"
+                src="/logos/icone-branco.svg"
+                alt=""
+                aria-hidden="true"
+                class="mx-auto h-10 w-auto lg:h-12"
+              />
+              <p class="eyebrow mt-4 text-white/45">Uma única<br />infraestrutura</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chips orbitando -->
+        <div
+          data-orbit
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-0 grid place-items-center"
+        >
+          {
+            c.currencies.map((cur) => (
+              <div
+                data-orbit-chip
+                class="absolute rounded-full border border-white/12 bg-ink-950/80 px-3 py-1.5 font-mono text-[0.6875rem] tracking-wider text-white/70 backdrop-blur-sm"
+              >
+                {cur}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Itens -->
+    <div
+      data-stagger-group="0.1"
+      class="mt-20 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/8 sm:grid-cols-2 lg:mt-28 lg:grid-cols-4"
+    >
+      {
+        c.items.map((item, i) => (
+          <div
+            data-anim="fade-up"
+            class="group bg-ink-900 p-7 transition-colors duration-500 hover:bg-brand-950/60"
+          >
+            <span class="eyebrow text-white/25 transition-colors duration-500 group-hover:text-brand-300">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 class="mt-6 font-display text-lg font-medium tracking-tight text-white">
+              {item.title}
+            </h3>
+            <p class="mt-2.5 text-[0.875rem] leading-relaxed font-light text-white/45">
+              {item.description}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

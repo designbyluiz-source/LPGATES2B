@@ -1,0 +1,36 @@
+# Cache-Control para Netlify e Cloudflare Pages.
+# Regra geral: tudo que tem hash no nome é imutável; o que não tem, mas é
+# estável (fontes, imagens, logos), leva cache longo; o HTML sempre revalida.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+
+# Assets versionados pelo Astro (nome contém hash de conteúdo)
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fontes: estáveis. Se trocar de fonte, renomeie o arquivo.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# Imagens e logos: estáveis. Se trocar a arte, renomeie o arquivo.
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/logos/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon.svg
+  Cache-Control: public, max-age=604800
+
+# HTML: sempre revalidar, para que um novo deploy apareça na hora.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate

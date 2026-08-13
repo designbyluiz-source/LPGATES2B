@@ -1,0 +1,49 @@
+---
+import { depoimentos as c } from '../../data/content';
+---
+
+<section id="depoimentos" class="texture relative overflow-hidden bg-ink-950 py-24 lg:py-36">
+  <div class="grid-lines pointer-events-none absolute inset-0 opacity-30" aria-hidden="true"></div>
+
+  <div class="container-lp relative">
+
+    <div
+      data-stagger-group="0.12"
+      class="grid gap-5 lg:grid-cols-3"
+    >
+      {
+        c.items.map((item) => (
+          <figure
+            data-anim="fade-up"
+            class="card-dark group flex flex-col overflow-hidden"
+          >
+            <div class="relative aspect-4/3 overflow-hidden">
+              <img
+                src={`${item.image}-800.webp`}
+                srcset={`${item.image}-800.webp 800w, ${item.image}-1200.webp 1200w`}
+                sizes="(min-width: 1024px) 33vw, 100vw"
+                alt=""
+                aria-hidden="true"
+                width="800"
+                height="600"
+                loading="lazy" decoding="async"
+                class="h-full w-full scale-105 object-cover transition-transform duration-[1.4s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-100"
+              />
+              <div class="absolute inset-0 bg-linear-to-t from-ink-950 via-ink-950/25 to-transparent"></div>
+            </div>
+
+            <div class="flex flex-1 flex-col justify-between p-7">
+              <blockquote class="font-display text-xl leading-snug font-medium tracking-tight text-white lg:text-[1.375rem]">
+                <span class="text-brand-400">“</span>{item.quote}<span class="text-brand-400">”</span>
+              </blockquote>
+              <figcaption class="mt-8 flex items-center gap-3 border-t border-white/8 pt-6">
+                <span class="h-1 w-6 rounded-full bg-brand-400"></span>
+                <span class="eyebrow text-white/45">{item.role}</span>
+              </figcaption>
+            </div>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>

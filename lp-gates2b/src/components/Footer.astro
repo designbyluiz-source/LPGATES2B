@@ -1,0 +1,68 @@
+---
+import { footer } from '../data/content';
+---
+
+<footer class="texture relative overflow-hidden border-t border-white/8 bg-ink-950 pt-20 pb-10">
+  <div class="container-lp relative">
+    <div class="grid gap-14 lg:grid-cols-[1.2fr_2fr] lg:gap-20">
+      <div>
+        <img width="938" height="232" src="/logos/logo-branco.svg" alt="Gates2B" class="h-7 w-auto" />
+        <p
+          class="mt-7 font-display text-xl leading-snug font-light tracking-tight text-white/60 lg:text-2xl"
+        >
+          {footer.claim.map((line) => <span class="block">{line} </span>)}
+        </p>
+      </div>
+
+      <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          footer.columns.map((col) => (
+            <div>
+              <h3 class="eyebrow text-white/30">{col.title}</h3>
+              <ul class="mt-5 space-y-3">
+                {col.links.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      class="group inline-flex items-center gap-2 text-[0.9375rem] font-light text-white/55 transition-colors duration-300 hover:text-white"
+                    >
+                      <span
+                        class="h-px w-0 bg-brand-300 transition-all duration-400 group-hover:w-3"
+                      />
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Marca gigante como grafismo -->
+    <div class="mt-20 overflow-hidden border-t border-white/8 pt-10" aria-hidden="true">
+      <img width="938" height="232"
+        src="/logos/logo-branco.svg"
+        alt=""
+        class="w-full opacity-[0.045]"
+        style="min-width: 100%"
+      />
+    </div>
+
+    <div
+      class="mt-10 flex flex-col items-start justify-between gap-4 text-[0.8125rem] text-white/35 sm:flex-row sm:items-center"
+    >
+      <p>{footer.legal}</p>
+      <div class="flex flex-wrap items-center gap-6">
+        {
+          footer.legalLinks.map((link) => (
+            <a href={link.href} class="transition-colors duration-300 hover:text-white/70">
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>

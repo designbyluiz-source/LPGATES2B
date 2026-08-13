@@ -1,0 +1,482 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   GATES2B — DESIGN SYSTEM
+   Derivado do Brandbook Gates2b (cores, tipografia, grafismos)
+   Cores oficiais da marca: #345ba6 (azul) e #ffffff (branco).
+   A escala de azuis e a família "ink" são derivações tonais da cor oficial,
+   usadas apenas como superfície/estado de interface.
+   ========================================================================== */
+
+@theme {
+  /* ---- Tipografia ------------------------------------------------------ */
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Fustat", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Space Grotesk", ui-monospace, monospace;
+
+  /* ---- Cor da marca ---------------------------------------------------- */
+  --color-brand: #345ba6;
+  --color-brand-50: #eef3fb;
+  --color-brand-100: #d8e3f6;
+  --color-brand-200: #b4c9ec;
+  --color-brand-300: #86a6dd;
+  --color-brand-400: #5b83c9;
+  --color-brand-500: #345ba6;
+  --color-brand-600: #2b4c8b;
+  --color-brand-700: #223c6d;
+  --color-brand-800: #1a2d51;
+  --color-brand-900: #132038;
+  --color-brand-950: #0b1322;
+
+  /* ---- Superfícies escuras (derivadas do azul) ------------------------- */
+  --color-ink-950: #04060c;
+  --color-ink-900: #070a12;
+  --color-ink-850: #0a0e18;
+  --color-ink-800: #0f141f;
+  --color-ink-700: #161c2a;
+  --color-ink-600: #1f2634;
+
+  /* ---- Superfícies claras --------------------------------------------- */
+  --color-paper: #ffffff;
+  --color-paper-100: #f6f8fc;
+  --color-paper-200: #eef1f7;
+  --color-paper-300: #e2e7f0;
+
+  /* ---- Ritmo / raios --------------------------------------------------- */
+  --radius-card: 20px;
+  --radius-pill: 999px;
+
+  /* ---- Easing ---------------------------------------------------------- */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   FONTES SELF-HOSTED (variable)
+   ========================================================================== */
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/fonts/SpaceGrotesk-Variable.woff2") format("woff2-variations");
+  font-weight: 300 700;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Fustat";
+  src: url("/fonts/Fustat-Variable.woff2") format("woff2-variations");
+  font-weight: 200 800;
+  font-display: swap;
+  font-style: normal;
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink-950);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-brand-500);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-300);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  img, svg {
+    display: block;
+  }
+
+  /* Evita FOUC das animações de entrada */
+  [data-anim] {
+    will-change: transform, opacity;
+  }
+}
+
+/* ==========================================================================
+   UTILITÁRIOS DE MARCA
+   ========================================================================== */
+@utility container-lp {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  @media (min-width: 1024px) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Textura pixelada do brandbook — sempre em baixa opacidade */
+@utility texture {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("/img/noise.webp");
+    background-size: 160px 160px;
+    opacity: 0.045;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+}
+
+/* Eyebrow / label de seção */
+@utility eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+@layer components {
+  /* ---- Tipografia de display ----------------------------------------- */
+  .display-xl {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.5rem, 6.4vw, 5.75rem);
+    line-height: 0.96;
+    letter-spacing: -0.045em;
+  }
+  .display-lg {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.25rem, 5vw, 4.25rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .display-md {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+  }
+  .lead {
+    font-size: clamp(1.0625rem, 1.35vw, 1.3125rem);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ---- Botões --------------------------------------------------------- */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    border-radius: var(--radius-pill);
+    padding: 0.9375rem 1.75rem;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    isolation: isolate;
+    overflow: hidden;
+    transition: transform 0.4s var(--ease-brand), color 0.3s var(--ease-brand),
+      border-color 0.3s var(--ease-brand), background-color 0.3s var(--ease-brand);
+  }
+  .btn > * {
+    position: relative;
+    z-index: 2;
+  }
+  /* preenchimento que sobe no hover */
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    transform: translateY(101%);
+    transition: transform 0.5s var(--ease-brand);
+  }
+  .btn:hover::before {
+    transform: translateY(0);
+  }
+
+  .btn-primary {
+    background: var(--color-brand-500);
+    color: #fff;
+  }
+  .btn-primary::before {
+    background: #fff;
+  }
+  .btn-primary:hover {
+    color: var(--color-brand-600);
+  }
+
+  .btn-light {
+    background: #fff;
+    color: var(--color-ink-950);
+  }
+  .btn-light::before {
+    background: var(--color-brand-500);
+  }
+  .btn-light:hover {
+    color: #fff;
+  }
+
+  .btn-dark {
+    background: var(--color-ink-950);
+    color: #fff;
+  }
+  .btn-dark::before {
+    background: var(--color-brand-500);
+  }
+
+  .btn-ghost-light {
+    border: 1px solid color-mix(in srgb, #fff 22%, transparent);
+    color: #fff;
+  }
+  .btn-ghost-light::before {
+    background: #fff;
+  }
+  .btn-ghost-light:hover {
+    color: var(--color-ink-950);
+    border-color: #fff;
+  }
+
+  .btn-ghost-dark {
+    border: 1px solid color-mix(in srgb, var(--color-ink-950) 16%, transparent);
+    color: var(--color-ink-950);
+  }
+  .btn-ghost-dark::before {
+    background: var(--color-ink-950);
+  }
+  .btn-ghost-dark:hover {
+    color: #fff;
+    border-color: var(--color-ink-950);
+  }
+
+  /* ---- Cards ---------------------------------------------------------- */
+  .card-dark {
+    position: relative;
+    border-radius: var(--radius-card);
+    border: 1px solid color-mix(in srgb, #fff 8%, transparent);
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, #fff 5%, transparent),
+      color-mix(in srgb, #fff 1.5%, transparent)
+    );
+    transition: border-color 0.5s var(--ease-brand), transform 0.5s var(--ease-brand),
+      background-color 0.5s var(--ease-brand);
+  }
+  .card-dark:hover {
+    border-color: color-mix(in srgb, var(--color-brand-300) 42%, transparent);
+  }
+
+  .card-light {
+    position: relative;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-paper-300);
+    background: #fff;
+    transition: border-color 0.5s var(--ease-brand), transform 0.5s var(--ease-brand),
+      box-shadow 0.5s var(--ease-brand);
+  }
+  .card-light:hover {
+    border-color: var(--color-brand-300);
+    box-shadow: 0 24px 60px -32px color-mix(in srgb, var(--color-brand-500) 40%, transparent);
+  }
+
+  /* ---- Linhas / réguas ------------------------------------------------ */
+  .rule-dark {
+    border-color: color-mix(in srgb, #fff 10%, transparent);
+  }
+  .rule-light {
+    border-color: var(--color-paper-300);
+  }
+
+  /* Grid de fundo técnico */
+  .grid-lines {
+    background-image: linear-gradient(
+        to right,
+        color-mix(in srgb, #fff 4%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, color-mix(in srgb, #fff 4%, transparent) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+  .grid-lines-light {
+    background-image: linear-gradient(to right, var(--color-paper-200) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-paper-200) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+}
+
+/* ==========================================================================
+   ENTRADA DO HERO — em CSS, de propósito.
+   O hero é o conteúdo do LCP. Se a entrada dependesse do GSAP, o texto só
+   pintaria depois de baixar e executar o bundle. Em CSS (inline no <head>),
+   a animação começa no primeiro frame. O movimento é idêntico ao do GSAP:
+   translateY(110%) + rotate(2deg) com expo.out para as linhas do título,
+   e fade + subida de 28px para os blocos de apoio.
+   ========================================================================== */
+@keyframes heroLine {
+  from {
+    transform: translateY(110%) rotate(2deg);
+  }
+  to {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+@keyframes heroRise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes heroFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Imagem de fundo: a intro vive no <img> e o parallax do GSAP no <picture>,
+   para que o fill-mode da animação não sobrescreva o transform do scroll. */
+@keyframes heroMedia {
+  from {
+    opacity: 0.2;
+    transform: scale(1.18);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+@keyframes heroGlow {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+  to {
+    opacity: 0.45;
+    scale: 1;
+  }
+}
+.hero-media-in {
+  animation: heroMedia 2.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero-glow-in {
+  animation: heroGlow 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.hero-line {
+  display: block;
+  overflow: hidden;
+  /* mesma folga da máscara do SplitText, para não cortar descendentes */
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.hero-line > span {
+  display: block;
+  animation: heroLine 1.05s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0s);
+}
+.hero-rise {
+  animation: heroRise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0s);
+}
+.hero-fade {
+  animation: heroFade 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0s);
+}
+
+/* ==========================================================================
+   ANIMAÇÃO — estados iniciais (aplicados só quando o JS está ativo)
+   ========================================================================== */
+/* opacity: 0 e não visibility: hidden — um título com visibility:hidden sai da
+   árvore de acessibilidade, e como o SplitText agora roda tarde (só quando a
+   seção chega na viewport), os h2 ficariam invisíveis para leitores de tela e
+   auditorias, quebrando a hierarquia de headings. Com opacity o título
+   continua anunciado. */
+html.js [data-split] {
+  opacity: 0;
+}
+html.js [data-anim="fade-up"] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+html.js [data-anim="fade"] {
+  opacity: 0;
+}
+html.js [data-anim="scale-in"] {
+  opacity: 0;
+  transform: scale(0.94);
+}
+html.js [data-anim="clip-up"] {
+  clip-path: inset(100% 0 0 0);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+/* ==========================================================================
+   ACESSIBILIDADE — movimento reduzido
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-anim],
+  html.js [data-split] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .hero-line > span,
+  .hero-rise,
+  .hero-fade,
+  .hero-media-in,
+  .hero-glow-in {
+    animation: none !important;
+  }
+  .marquee-track {
+    animation: none !important;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
+}

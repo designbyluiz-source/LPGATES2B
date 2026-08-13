@@ -1,0 +1,60 @@
+---
+import { numeros as c } from '../../data/content';
+---
+
+<section id="numeros" class="texture relative overflow-hidden bg-ink-950 py-24 lg:py-32">
+  <!-- Fundo F1 -->
+  <div class="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+    <img
+      data-parallax
+      data-parallax-amount="14"
+      src="/img/numeros-f1-2400.webp"
+      alt=""
+      width="2400"
+      height="1000"
+      loading="lazy" decoding="async"
+      class="h-[124%] w-full scale-105 object-cover object-center"
+    />
+    <div class="absolute inset-0 bg-ink-950/58"></div>
+    <div class="absolute inset-0 bg-linear-to-b from-ink-950 via-ink-950/25 to-ink-950"></div>
+  </div>
+
+  <div class="container-lp relative z-10">
+
+    <div
+      data-stagger-group="0.12"
+      class="grid gap-px overflow-hidden rounded-2xl border border-white/12 bg-white/14 sm:grid-cols-2 lg:grid-cols-4"
+    >
+      {
+        c.items.map((item) => (
+          <div
+            data-anim="fade-up"
+            class="group relative bg-ink-950/82 px-6 py-10 text-center backdrop-blur-md transition-colors duration-500 hover:bg-brand-950/85 lg:px-8 lg:py-14"
+          >
+            <p class="font-display text-[clamp(2rem,3.4vw,3rem)] leading-none font-medium tracking-[-0.04em] text-white">
+              {item.value !== null && item.value !== undefined ? (
+                <span
+                  data-counter
+                  data-value={item.value}
+                  data-decimals={item.decimals}
+                  data-prefix={item.prefix}
+                  data-suffix={item.suffix}
+                >
+                  {item.prefix}
+                  {item.value}
+                  {item.suffix}
+                </span>
+              ) : (
+                <span>{item.text}</span>
+              )}
+            </p>
+            <p class="eyebrow mt-4 text-white/40 transition-colors duration-500 group-hover:text-brand-300">
+              {item.label}
+            </p>
+            <span class="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-linear-to-r from-brand-400 to-transparent transition-transform duration-700 group-hover:scale-x-100" />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

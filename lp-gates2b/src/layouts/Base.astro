@@ -1,0 +1,147 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/content';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.title, description = site.description } = Astro.props;
+const base = Astro.site ?? new URL(site.url);
+const canonical = new URL(Astro.url.pathname, base).toString();
+const ogImage = new URL('/og.jpg', base).toString();
+---
+
+<!doctype html>
+<html lang="pt-BR" data-nav-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#04060c" />
+
+    <!-- Marca que o JS está ativo ANTES da primeira pintura. Sem isso, o
+         conteúdo apareceria e só depois seria escondido pelos estados
+         iniciais das animações, causando um flash. O timeout é a rede de
+         segurança: se o bundle falhar, o conteúdo volta a aparecer. -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!document.documentElement.hasAttribute('data-motion-ready')) {
+          document.documentElement.classList.remove('js');
+        }
+      }, 4000);
+    </script>
+
+    <!-- LCP: a imagem do hero é o maior elemento above the fold -->
+    <link
+      rel="preload"
+      as="image"
+      href="/img/hero-f1-1600.webp"
+      type="image/webp"
+      fetchpriority="high"
+      media="(max-width: 1023px)"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/img/hero-f1-2400.webp"
+      type="image/webp"
+      fetchpriority="high"
+      media="(min-width: 1024px)"
+    />
+
+    <!-- Fontes: precarregadas para evitar salto tipográfico -->
+    <link
+      rel="preload"
+      href="/fonts/SpaceGrotesk-Variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="preload" href="/fonts/Fustat-Variable.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Gates2B — Infraestrutura de monetização global" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Gates2B',
+        url: site.url,
+        description: site.description,
+        slogan: 'Segurança para operar. Liberdade para crescer.',
+      })}
+    />
+  </head>
+
+  <body>
+    <a
+      href="#produto"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[110] focus:rounded-full focus:bg-white focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-ink-950"
+    >
+      Pular para o conteúdo
+    </a>
+
+    <Nav />
+
+    <main id="conteudo">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      import '../scripts/motion.js';
+    </script>
+
+    <style is:global>
+      /* Máscaras do SplitText — o padding evita que máscara corte descendentes
+         (g, q, p, ç) em títulos com line-height apertado */
+      .split-line {
+        display: block;
+        padding-bottom: 0.14em;
+        margin-bottom: -0.14em;
+      }
+
+      /* Trava o scroll atrás do menu mobile aberto. */
+      html.menu-open,
+      html.menu-open body {
+        overflow: hidden;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+    </style>
+  </body>
+</html>

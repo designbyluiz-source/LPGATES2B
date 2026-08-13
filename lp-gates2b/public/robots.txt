@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gates2b.com/sitemap-index.xml

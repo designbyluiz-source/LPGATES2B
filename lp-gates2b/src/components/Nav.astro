@@ -1,0 +1,191 @@
+---
+import { nav } from '../data/content';
+---
+
+<header
+  data-nav
+  class="nav fixed inset-x-0 top-0 z-60 transition-[background-color,backdrop-filter,border-color] duration-500"
+>
+  <div class="container-lp">
+    <div class="nav-inner flex h-18 items-center justify-between gap-8 lg:h-20">
+      <!-- Logo -->
+      <a href="#" class="nav-logo group relative flex items-center" aria-label="Gates2B — início">
+        <img width="938" height="232" src="/logos/logo-branco.svg" alt="Gates2B" class="nav-logo-light h-6 w-auto lg:h-7" />
+        <img width="938" height="232"
+          src="/logos/logo-preto.svg"
+          alt=""
+          aria-hidden="true"
+          class="nav-logo-dark absolute inset-0 h-6 w-auto opacity-0 lg:h-7"
+        />
+      </a>
+
+      <!-- Links desktop -->
+      <nav class="hidden items-center gap-1 lg:flex" aria-label="Navegação principal">
+        {
+          nav.links.map((link) => (
+            <a
+              href={link.href}
+              data-nav-link
+              class="nav-link relative rounded-full px-4 py-2 text-[0.9rem] font-medium transition-colors duration-300"
+            >
+              <span class="relative z-10">{link.label}</span>
+              <span class="nav-link-dot absolute inset-x-4 bottom-1 h-px origin-left scale-x-0 transition-transform duration-400" />
+            </a>
+          ))
+        }
+      </nav>
+
+      <!-- Ações -->
+      <div class="flex items-center gap-3">
+        <a
+          href={nav.ctaSecondary.href}
+          class="nav-link hidden rounded-full px-4 py-2 text-[0.9rem] font-medium transition-colors duration-300 md:inline-flex"
+        >
+          {nav.ctaSecondary.label}
+        </a>
+        <a href={nav.cta.href} class="btn btn-primary hidden !py-3 !text-[0.875rem] sm:inline-flex">
+          <span>{nav.cta.label}</span>
+        </a>
+
+        <!-- Toggle mobile -->
+        <button
+          data-menu-toggle
+          type="button"
+          aria-expanded="false"
+          aria-controls="menu-mobile"
+          aria-label="Abrir menu"
+          class="menu-toggle relative grid h-11 w-11 place-items-center rounded-full lg:hidden"
+        >
+          <span class="menu-bar block h-[1.5px] w-5 -translate-y-[3px]"></span>
+          <span class="menu-bar absolute block h-[1.5px] w-5 translate-y-[3px]"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Painel mobile -->
+  <div
+    id="menu-mobile"
+    data-menu-panel
+    class="menu-panel fixed inset-0 top-0 z-[-1] flex flex-col justify-between bg-ink-950 px-6 pt-28 pb-10 lg:hidden"
+  >
+    <nav class="flex flex-col gap-1" aria-label="Navegação mobile">
+      {
+        nav.links.map((link, i) => (
+          <a
+            href={link.href}
+            data-menu-item
+            class="flex items-baseline gap-4 border-b border-white/8 py-5 font-display text-3xl font-medium tracking-tight text-white"
+          >
+            <span class="eyebrow text-brand-300">{String(i + 1).padStart(2, '0')}</span>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <div data-menu-item class="flex flex-col gap-3">
+      <a href={nav.cta.href} class="btn btn-primary w-full">
+        <span>{nav.cta.label}</span>
+      </a>
+      <a href={nav.ctaSecondary.href} class="btn btn-ghost-light w-full">
+        <span>{nav.ctaSecondary.label}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* ---- Estado base (sobre fundo escuro) ---- */
+  .nav {
+    border-bottom: 1px solid transparent;
+  }
+  .nav-link {
+    color: color-mix(in srgb, #fff 62%, transparent);
+  }
+  .nav-link:hover {
+    color: #fff;
+  }
+  .nav-link.is-active {
+    color: #fff;
+  }
+  .nav-link-dot {
+    background: var(--color-brand-300);
+  }
+  .nav-link.is-active .nav-link-dot,
+  .nav-link:hover .nav-link-dot {
+    transform: scaleX(1);
+  }
+  .menu-bar {
+    background: #fff;
+    transition:
+      transform 0.45s var(--ease-brand),
+      background-color 0.4s;
+  }
+  .menu-toggle {
+    border: 1px solid color-mix(in srgb, #fff 16%, transparent);
+  }
+
+  /* ---- Rolado: fundo com blur ---- */
+  .nav.is-scrolled {
+    background: color-mix(in srgb, var(--color-ink-950) 72%, transparent);
+    backdrop-filter: blur(20px) saturate(140%);
+    border-bottom-color: color-mix(in srgb, #fff 8%, transparent);
+  }
+
+  /* ---- Sobre seções claras ---- */
+  :global(html[data-nav-theme='light']) .nav-logo-light {
+    opacity: 0;
+  }
+  :global(html[data-nav-theme='light']) .nav-logo-dark {
+    opacity: 1;
+  }
+  .nav-logo-light,
+  .nav-logo-dark {
+    transition: opacity 0.4s var(--ease-brand);
+  }
+  :global(html[data-nav-theme='light']) .nav-link {
+    color: color-mix(in srgb, var(--color-ink-950) 62%, transparent);
+  }
+  :global(html[data-nav-theme='light']) .nav-link:hover,
+  :global(html[data-nav-theme='light']) .nav-link.is-active {
+    color: var(--color-ink-950);
+  }
+  :global(html[data-nav-theme='light']) .nav-link-dot {
+    background: var(--color-brand-500);
+  }
+  :global(html[data-nav-theme='light']) .menu-bar {
+    background: var(--color-ink-950);
+  }
+  :global(html[data-nav-theme='light']) .menu-toggle {
+    border-color: color-mix(in srgb, var(--color-ink-950) 14%, transparent);
+  }
+  :global(html[data-nav-theme='light']) .nav.is-scrolled {
+    background: color-mix(in srgb, #fff 78%, transparent);
+    border-bottom-color: var(--color-paper-300);
+  }
+
+  /* ---- Painel mobile ---- */
+  .menu-panel {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 0.75s var(--ease-brand);
+    pointer-events: none;
+  }
+  .menu-panel.is-open {
+    clip-path: inset(0 0 0% 0);
+    pointer-events: auto;
+  }
+  :global(html.menu-open) .menu-bar:first-of-type {
+    transform: translateY(0) rotate(45deg);
+    background: #fff;
+  }
+  :global(html.menu-open) .menu-bar:last-of-type {
+    transform: translateY(0) rotate(-45deg);
+    background: #fff;
+  }
+  :global(html.menu-open) .nav-logo-dark {
+    opacity: 0;
+  }
+  :global(html.menu-open) .nav-logo-light {
+    opacity: 1;
+  }
+</style>

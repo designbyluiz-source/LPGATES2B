@@ -342,7 +342,9 @@ function initRail() {
   const mm = gsap.matchMedia();
 
   mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
-    const distance = () => track.scrollWidth - window.innerWidth + 160;
+    // Sem folga extra: qualquer valor somado aqui vira um vão vazio à direita
+    // quando a última carta chega ao fim do trilho.
+    const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -364,7 +366,7 @@ function initRail() {
     cards.forEach((card, i) => {
       tl.fromTo(
         card,
-        { '--dim': i === 0 ? 0 : 0.68 },
+        { '--dim': i === 0 ? 0 : 0.42 },
         { '--dim': 0, duration: 0.2, ease: 'none' },
         i * 0.22
       );

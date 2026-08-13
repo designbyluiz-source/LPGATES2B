@@ -7,7 +7,7 @@ import { nav } from '../data/content';
   class="nav fixed inset-x-0 top-0 z-60 transition-[background-color,backdrop-filter,border-color] duration-500"
 >
   <div class="container-lp">
-    <div class="nav-inner flex h-18 items-center justify-between gap-8 lg:h-20">
+    <div class="nav-inner flex h-18 items-center justify-between gap-4 lg:h-20 lg:gap-8">
       <!-- Logo -->
       <a href="#" class="nav-logo group relative flex items-center" aria-label="Gates2B — início">
         <img width="938" height="232" src="/logos/logo-branco.svg" alt="Gates2B" class="nav-logo-light h-6 w-auto lg:h-7" />
@@ -26,7 +26,7 @@ import { nav } from '../data/content';
             <a
               href={link.href}
               data-nav-link
-              class="nav-link relative rounded-full px-4 py-2 text-[0.9rem] font-medium transition-colors duration-300"
+              class="nav-link relative rounded-full px-4 py-2 text-[0.9rem] font-medium whitespace-nowrap transition-colors duration-300"
             >
               <span class="relative z-10">{link.label}</span>
               <span class="nav-link-dot absolute inset-x-4 bottom-1 h-px origin-left scale-x-0 transition-transform duration-400" />
@@ -39,12 +39,40 @@ import { nav } from '../data/content';
       <div class="flex items-center gap-3">
         <a
           href={nav.ctaSecondary.href}
-          class="nav-link hidden rounded-full px-4 py-2 text-[0.9rem] font-medium transition-colors duration-300 md:inline-flex"
+          class="nav-link hidden rounded-full px-4 py-2 text-[0.9rem] font-medium whitespace-nowrap transition-colors duration-300 lg:inline-flex"
         >
           {nav.ctaSecondary.label}
         </a>
-        <a href={nav.cta.href} class="btn btn-primary hidden !py-3 !text-[0.875rem] sm:inline-flex">
-          <span>{nav.cta.label}</span>
+
+        <!-- Demonstração: ação secundária (contorno). O CTA principal da topbar
+             é o Entrar, à direita — quem chega pela navegação com intenção de
+             clicar num botão quase sempre é cliente querendo acessar a conta. -->
+        <a
+          href={nav.cta.href}
+          class="nav-btn-ghost hidden items-center rounded-full border px-5 py-2.5 text-[0.875rem] font-semibold whitespace-nowrap transition-colors duration-300 md:inline-flex"
+        >
+          {nav.cta.label}
+        </a>
+
+        <a
+          href={nav.login.href}
+          class="btn btn-primary !gap-2 !px-5 !py-3 !text-[0.875rem]"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-[0.95rem] w-[0.95rem]"
+            aria-hidden="true"
+          >
+            <path d="M10 17l5-5-5-5" />
+            <path d="M15 12H3" />
+            <path d="M13 4h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6" />
+          </svg>
+          <span>{nav.login.label}</span>
         </a>
 
         <!-- Toggle mobile -->
@@ -84,11 +112,17 @@ import { nav } from '../data/content';
       }
     </nav>
     <div data-menu-item class="flex flex-col gap-3">
-      <a href={nav.cta.href} class="btn btn-primary w-full">
+      <a href={nav.login.href} class="btn btn-primary w-full">
+        <span>{nav.login.label}</span>
+      </a>
+      <a href={nav.cta.href} class="btn btn-ghost-light w-full">
         <span>{nav.cta.label}</span>
       </a>
-      <a href={nav.ctaSecondary.href} class="btn btn-ghost-light w-full">
-        <span>{nav.ctaSecondary.label}</span>
+      <a
+        href={nav.ctaSecondary.href}
+        class="mt-1 text-center text-[0.875rem] font-medium text-white/50 transition-colors duration-300 hover:text-white"
+      >
+        {nav.ctaSecondary.label}
       </a>
     </div>
   </div>
@@ -125,6 +159,19 @@ import { nav } from '../data/content';
     border: 1px solid color-mix(in srgb, #fff 16%, transparent);
   }
 
+  /* Pill contornado da topbar (Solicitar demonstração): ação secundária ao lado
+     do CTA principal, que é o Entrar. Segue o tema da navegação, invertendo
+     sobre as seções claras. */
+  .nav-btn-ghost {
+    border-color: color-mix(in srgb, #fff 20%, transparent);
+    color: #fff;
+  }
+  .nav-btn-ghost:hover {
+    border-color: #fff;
+    background: #fff;
+    color: var(--color-ink-950);
+  }
+
   /* ---- Rolado: fundo com blur ---- */
   .nav.is-scrolled {
     background: color-mix(in srgb, var(--color-ink-950) 72%, transparent);
@@ -158,6 +205,15 @@ import { nav } from '../data/content';
   }
   :global(html[data-nav-theme='light']) .menu-toggle {
     border-color: color-mix(in srgb, var(--color-ink-950) 14%, transparent);
+  }
+  :global(html[data-nav-theme='light']) .nav-btn-ghost {
+    border-color: color-mix(in srgb, var(--color-ink-950) 18%, transparent);
+    color: var(--color-ink-950);
+  }
+  :global(html[data-nav-theme='light']) .nav-btn-ghost:hover {
+    border-color: var(--color-ink-950);
+    background: var(--color-ink-950);
+    color: #fff;
   }
   :global(html[data-nav-theme='light']) .nav.is-scrolled {
     background: color-mix(in srgb, #fff 78%, transparent);

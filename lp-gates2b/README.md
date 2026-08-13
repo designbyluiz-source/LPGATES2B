@@ -229,9 +229,9 @@ com o original.
 5. Configurar o domínio final em `astro.config.mjs` (`site`) — ele alimenta o
    canonical, o Open Graph e o sitemap. Trocar também a URL em
    `public/robots.txt`.
-6. Configurar analytics. Se usar script de terceiros, carregue com `defer` ou
+7. Configurar analytics. Se usar script de terceiros, carregue com `defer` ou
    após interação: um único script síncrono derruba a nota de performance.
-7. Revisar contraste do texto secundário sobre fundo escuro. Os cinzas entre
+8. Revisar contraste do texto secundário sobre fundo escuro. Os cinzas entre
    25% e 45% de branco ficam abaixo de 4,5:1 e uma auditoria manual os
    apontaria. O Lighthouse não os pega porque, no momento da medição, esses
    elementos ainda estão em `opacity: 0` esperando a animação de entrada.

@@ -22,6 +22,8 @@ export const nav = {
   ],
   cta: { label: 'Solicitar demonstração', href: '#contato' },
   ctaSecondary: { label: 'Documentação', href: '#documentacao' },
+  // PENDENTE: apontar para a URL real do painel antes de publicar.
+  login: { label: 'Entrar', href: 'https://app.gates2b.com' },
 };
 
 export const hero = {
@@ -29,6 +31,10 @@ export const hero = {
   title: ['Infraestrutura de', 'monetização global.'],
   subtitle:
     'Conectando pagamentos, liquidação e operações internacionais através de uma única infraestrutura.',
+  // NÃO renderizado. O hero ficou com título + subtítulo + CTAs; estes dois
+  // parágrafos sobrecarregavam o topo da página e o conteúdo deles já é
+  // retomado nas seções Produto e Infraestrutura. Mantidos aqui caso se queira
+  // reintroduzi-los (ver Hero.astro).
   paragraphs: [
     'A Gates2B foi desenvolvida para empresas que precisam receber, processar, conciliar e movimentar recursos com previsibilidade operacional.',
     'Uma arquitetura preparada para integrar diferentes meios de pagamento, moedas e fluxos financeiros em uma única operação.',
@@ -421,6 +427,7 @@ export const footer = {
     {
       title: 'Contato',
       links: [
+        { label: 'Entrar na plataforma', href: 'https://app.gates2b.com' },
         { label: 'Solicitar demonstração', href: '#contato' },
         { label: 'Falar com especialista', href: '#contato' },
         { label: 'contato@gates2b.com', href: 'mailto:contato@gates2b.com' },

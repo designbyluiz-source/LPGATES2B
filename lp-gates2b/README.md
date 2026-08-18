@@ -16,6 +16,32 @@ npm run build     # gera ./dist (site estático)
 npm run preview   # serve o build
 ```
 
+### Verificar responsividade antes de publicar
+
+```bash
+npm i -D playwright        # uma vez
+npm run build && npm run preview     # em outro terminal
+npm run check:responsivo
+```
+
+Roda em 11 larguras, de 320 a 1920 px, e falha se encontrar estouro
+horizontal, texto abaixo de 11 px ou erro de console.
+
+**Por que isso importa mais do que parece:** se qualquer elemento for mais
+largo que a viewport, o Safari no iOS não mostra barra de rolagem horizontal —
+ele reduz o zoom até a página caber. O resultado é a página inteira minúscula e
+ilegível no celular, sem nada de óbvio errado no código.
+
+Duas armadilhas escondem esse bug de quem testa:
+
+1. O `overflow-x: clip` no `body` (que este projeto usa) faz
+   `documentElement.scrollWidth` reportar a largura já cortada. O teste passa e
+   o celular continua quebrado. O script remove o clip antes de medir.
+2. Emular celular só estreitando a janela **não reproduz** o comportamento. É
+   preciso `isMobile: true`, que liga a viewport de layout móvel. Foi
+   exatamente por não usar isso que um estouro na topbar em 1024 px passou
+   despercebido por várias revisões.
+
 Requer Node 18.20+ (recomendado Node 22).
 
 O `build` gera um site 100% estático — pode ser publicado em Vercel, Netlify,

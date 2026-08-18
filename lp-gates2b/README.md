@@ -16,16 +16,22 @@ npm run build     # gera ./dist (site estático)
 npm run preview   # serve o build
 ```
 
-### Verificar responsividade antes de publicar
+### Verificar antes de publicar
 
 ```bash
 npm i -D playwright        # uma vez
 npm run build && npm run preview     # em outro terminal
-npm run check:responsivo
+npm run check                        # roda os dois abaixo
 ```
 
-Roda em 11 larguras, de 320 a 1920 px, e falha se encontrar estouro
-horizontal, texto abaixo de 11 px ou erro de console.
+**`npm run check:responsivo`** — 11 larguras, de 320 a 1920 px. Falha se
+encontrar estouro horizontal, texto abaixo de 11 px ou erro de console.
+
+**`npm run check:comportamento`** — 23 asserções de interação: menu mobile como
+diálogo (foco entra, Tab circula, ESC devolve o foco, fundo travado), âncoras,
+tabs por teclado, resize entre desktop e mobile na seção pinada, deep link,
+timers que precisam parar fora da tela e scroll rápido de ida e volta.
+Cada asserção nasceu de um bug real; os comentários no script dizem qual.
 
 **Por que isso importa mais do que parece:** se qualquer elemento for mais
 largo que a viewport, o Safari no iOS não mostra barra de rolagem horizontal —

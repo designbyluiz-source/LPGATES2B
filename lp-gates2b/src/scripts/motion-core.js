@@ -39,6 +39,24 @@ const EASE_IO = 'power2.inOut';
    ══════════════════════════════════════════════════════════════════════════ */
 const NAV_OFFSET = 72;
 
+/**
+ * Marca quando o scroll foi disparado por código (clique em âncora), e não pelo
+ * gesto do usuário. A navegação esconde a topbar quando o usuário rola para
+ * baixo; sem esta marca, clicar num item do menu faz a página descer, a topbar
+ * interpreta como "usuário rolando" e se esconde — deixando o botão do menu
+ * inalcançável exatamente depois de usá-lo.
+ */
+let scrollProgramatico = 0;
+const marcarScrollProgramatico = () => {
+  scrollProgramatico = performance.now();
+};
+
+function irPara(target, suave = true) {
+  const y = target.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
+  marcarScrollProgramatico();
+  window.scrollTo({ top: y, behavior: suave && !REDUCED ? 'smooth' : 'auto' });
+}
+
 function initAnchors() {
   document.querySelectorAll('a[href^="#"]').forEach((a) => {
     a.addEventListener('click', (e) => {
@@ -48,10 +66,27 @@ function initAnchors() {
       if (!target) return;
       e.preventDefault();
       closeMobileMenu();
-      const y = target.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
-      window.scrollTo({ top: y, behavior: REDUCED ? 'auto' : 'smooth' });
+      irPara(target);
     });
   });
+}
+
+/**
+ * Deep link (abrir a página já com #secao). O navegador salta para a posição
+ * crua antes de o GSAP existir; depois disso a seção pinada cria seu spacer e
+ * as posições mudam, deixando o alvo fora de lugar. Reposiciona no fim do boot.
+ */
+function corrigirDeepLink() {
+  const hash = window.location.hash;
+  if (!hash || hash.length < 2) return;
+  let target;
+  try {
+    target = document.querySelector(hash);
+  } catch {
+    return;
+  }
+  if (!target) return;
+  irPara(target, false);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -221,11 +256,22 @@ function initNav() {
       const y = self.scroll();
       nav.classList.toggle('is-scrolled', y > 80);
       if (!REDUCED) {
-        const down = y > lastY && y > 320;
+        // Durante um scroll disparado por código, a topbar fica visível: o
+        // usuário acabou de pedir para ir a uma seção, não para esconder o menu.
+        const automatico = performance.now() - scrollProgramatico < 1400;
+        const down = !automatico && y > lastY && y > 320;
         gsap.to(nav, { yPercent: down ? -110 : 0, duration: 0.55, ease: EASE, overwrite: true });
       }
       lastY = y;
     },
+  });
+
+  // Navegação por teclado: se o foco entra na topbar enquanto ela está
+  // escondida (o usuário tabulou para baixo, o que rola a página), o foco fica
+  // num elemento invisível. Qualquer foco dentro dela a traz de volta.
+  nav.addEventListener('focusin', () => {
+    marcarScrollProgramatico();
+    gsap.to(nav, { yPercent: 0, duration: 0.3, ease: EASE, overwrite: true });
   });
 
   // Link ativo por seção
@@ -243,37 +289,84 @@ function initNav() {
   });
 }
 
-/* ---- Menu mobile ---- */
+/* ---- Menu mobile ----
+   Comporta-se como um diálogo: enquanto fechado não recebe foco (senão o Tab
+   passeia por 8 links invisíveis antes de chegar ao conteúdo), ao abrir o foco
+   entra no painel, o Tab circula dentro dele, e ao fechar o foco volta para o
+   botão que o abriu. */
 let menuOpen = false;
+
+function focaveisDoMenu(panel) {
+  return [...panel.querySelectorAll('a[href], button:not([disabled])')].filter(
+    (el) => el.offsetWidth > 0 || el.offsetHeight > 0
+  );
+}
+
 function closeMobileMenu() {
   if (!menuOpen) return;
   toggleMobileMenu(false);
 }
+
 function toggleMobileMenu(force) {
   const panel = document.querySelector('[data-menu-panel]');
   const btn = document.querySelector('[data-menu-toggle]');
   if (!panel || !btn) return;
+
   menuOpen = typeof force === 'boolean' ? force : !menuOpen;
   btn.setAttribute('aria-expanded', String(menuOpen));
+  btn.setAttribute('aria-label', menuOpen ? 'Fechar menu' : 'Abrir menu');
   panel.classList.toggle('is-open', menuOpen);
   document.documentElement.classList.toggle('menu-open', menuOpen);
-  if (!REDUCED) {
-    const items = panel.querySelectorAll('[data-menu-item]');
-    if (menuOpen) {
+
+  // inert tira o subárvore do foco e da árvore de acessibilidade de uma vez
+  if (menuOpen) panel.removeAttribute('inert');
+  else panel.setAttribute('inert', '');
+
+  if (menuOpen) {
+    if (!REDUCED) {
       gsap.fromTo(
-        items,
+        panel.querySelectorAll('[data-menu-item]'),
         { y: 30, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.7, ease: EASE, stagger: 0.055, delay: 0.12 }
       );
     }
+    const alvo = focaveisDoMenu(panel)[0];
+    if (alvo) requestAnimationFrame(() => alvo.focus({ preventScroll: true }));
+  } else {
+    btn.focus({ preventScroll: true });
   }
 }
+
 function initMobileMenu() {
   const btn = document.querySelector('[data-menu-toggle]');
-  if (!btn) return;
+  const panel = document.querySelector('[data-menu-panel]');
+  if (!btn || !panel) return;
+
+  panel.setAttribute('inert', '');
   btn.addEventListener('click', () => toggleMobileMenu());
+
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeMobileMenu();
+    if (!menuOpen) return;
+
+    if (e.key === 'Escape') {
+      closeMobileMenu();
+      return;
+    }
+
+    // mantém o Tab circulando dentro do painel aberto
+    if (e.key === 'Tab') {
+      const itens = focaveisDoMenu(panel);
+      if (!itens.length) return;
+      const primeiro = itens[0];
+      const ultimo = itens[itens.length - 1];
+      if (e.shiftKey && document.activeElement === primeiro) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault();
+        primeiro.focus();
+      }
+    }
   });
 }
 
@@ -550,21 +643,33 @@ function initModules() {
   );
 
   // pulso sequencial contínuo, como um sistema vivo
+  // O pulso só roda enquanto o painel está visível. Antes ficava num
+  // setInterval eterno, gastando bateria com a seção fora da tela.
+  let i = 0;
+  let timer = null;
+  const pulse = () => {
+    items.forEach((el) => el.classList.remove('is-live'));
+    items[i % items.length].classList.add('is-live');
+    i++;
+  };
+  const parar = () => {
+    if (timer) clearInterval(timer);
+    timer = null;
+  };
+
   ScrollTrigger.create({
     trigger: panel,
-    start: 'top 80%',
-    once: true,
-    onEnter: () => {
-      let i = 0;
-      const pulse = () => {
-        items.forEach((el) => el.classList.remove('is-live'));
-        items[i % items.length].classList.add('is-live');
-        i++;
-      };
-      pulse();
-      setInterval(pulse, 1400);
+    start: 'top bottom',
+    end: 'bottom top',
+    onToggle: (self) => {
+      parar();
+      if (self.isActive) {
+        pulse();
+        timer = setInterval(pulse, 1400);
+      }
     },
   });
+  window.addEventListener('pagehide', parar);
 
   // Parallax leve no painel
   gsap.to(panel, {
@@ -582,42 +687,52 @@ function initStream() {
     const rows = [...stream.querySelectorAll('[data-stream-row]')];
     if (!rows.length || REDUCED) return;
 
+    let entrou = false;
+    let timer = null;
+
+    const cycle = () => {
+      const first = stream.querySelector('[data-stream-row]');
+      if (!first) return;
+      gsap.to(first, {
+        opacity: 0,
+        height: 0,
+        marginTop: 0,
+        paddingTop: 0,
+        paddingBottom: 0,
+        duration: 0.45,
+        ease: EASE_IO,
+        onComplete: () => {
+          gsap.set(first, { clearProps: 'all' });
+          stream.appendChild(first);
+          gsap.fromTo(first, { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.5 });
+        },
+      });
+    };
+    const parar = () => {
+      if (timer) clearInterval(timer);
+      timer = null;
+    };
+
+    // A rotação roda apenas com o fluxo na tela — era um setInterval eterno.
     ScrollTrigger.create({
       trigger: stream,
-      start: 'top 85%',
-      once: true,
-      onEnter: () => {
-        gsap.fromTo(
-          rows,
-          { opacity: 0, x: -18 },
-          { opacity: 1, x: 0, duration: 0.6, ease: EASE, stagger: 0.12 }
-        );
-
-        // rotação contínua: primeira linha vai para o fim
-        let running = true;
-        const cycle = () => {
-          if (!running) return;
-          const first = stream.querySelector('[data-stream-row]');
-          if (!first) return;
-          gsap.to(first, {
-            opacity: 0,
-            height: 0,
-            marginTop: 0,
-            paddingTop: 0,
-            paddingBottom: 0,
-            duration: 0.45,
-            ease: EASE_IO,
-            onComplete: () => {
-              gsap.set(first, { clearProps: 'all' });
-              stream.appendChild(first);
-              gsap.fromTo(first, { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.5 });
-            },
-          });
-        };
-        setInterval(cycle, 2600);
-        window.addEventListener('pagehide', () => (running = false));
+      start: 'top bottom',
+      end: 'bottom top',
+      onToggle: (self) => {
+        parar();
+        if (!self.isActive) return;
+        if (!entrou) {
+          entrou = true;
+          gsap.fromTo(
+            rows,
+            { opacity: 0, x: -18 },
+            { opacity: 1, x: 0, duration: 0.6, ease: EASE, stagger: 0.12 }
+          );
+        }
+        timer = setInterval(cycle, 2600);
       },
     });
+    window.addEventListener('pagehide', parar);
   });
 }
 
@@ -717,9 +832,17 @@ function initTabs() {
   document.querySelectorAll('[data-tabs]').forEach((group) => {
     const btns = [...group.querySelectorAll('[data-tab-btn]')];
     const panels = [...group.querySelectorAll('[data-tab-panel]')];
+    let escolhaDoUsuario = false;
 
-    const activate = (id) => {
-      btns.forEach((b) => b.classList.toggle('is-active', b.dataset.tabBtn === id));
+    const activate = (id, focar = false) => {
+      btns.forEach((b) => {
+        const on = b.dataset.tabBtn === id;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-selected', String(on));
+        // só a aba ativa entra na ordem de tabulação; entre abas usa-se as setas
+        b.tabIndex = on ? 0 : -1;
+        if (on && focar) b.focus();
+      });
       panels.forEach((p) => {
         const on = p.dataset.tabPanel === id;
         p.hidden = !on;
@@ -733,15 +856,35 @@ function initTabs() {
       });
     };
 
-    btns.forEach((b) => b.addEventListener('click', () => activate(b.dataset.tabBtn)));
+    btns.forEach((b, i) => {
+      b.addEventListener('click', () => {
+        escolhaDoUsuario = true;
+        activate(b.dataset.tabBtn);
+      });
+      // navegação por setas, como manda o padrão de tabs
+      b.addEventListener('keydown', (e) => {
+        const passo = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!passo) return;
+        e.preventDefault();
+        escolhaDoUsuario = true;
+        const prox = btns[(i + passo + btns.length) % btns.length];
+        activate(prox.dataset.tabBtn, true);
+      });
+    });
+
     if (btns[0]) activate(btns[0].dataset.tabBtn);
 
-    // primeira animação ao entrar na viewport
+    // Reanima ao entrar na viewport — mas nunca desfaz a aba que o usuário
+    // escolheu: o gatilho dispara com a seção parcialmente visível, então dava
+    // para clicar em RESPONSE e ver a página voltar sozinha para REQUEST.
     ScrollTrigger.create({
       trigger: group,
       start: 'top 78%',
       once: true,
-      onEnter: () => btns[0] && activate(btns[0].dataset.tabBtn),
+      onEnter: () => {
+        if (escolhaDoUsuario || !btns[0]) return;
+        activate(btns[0].dataset.tabBtn);
+      },
     });
   });
 }
@@ -867,7 +1010,11 @@ async function boot() {
   initTerminal();
 
   ScrollTrigger.refresh();
-  window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+  corrigirDeepLink();
+  window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
+    corrigirDeepLink();
+  }, { once: true });
 }
 
 if (document.readyState === 'loading') {

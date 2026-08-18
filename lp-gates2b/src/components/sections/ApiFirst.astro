@@ -58,10 +58,18 @@ function tone(line: string, kind: 'request' | 'response') {
         <div
           class="overflow-hidden rounded-2xl border border-ink-950/10 bg-ink-950 shadow-[0_50px_120px_-60px_rgba(15,20,31,.7)]"
         >
-          <div class="flex items-center gap-1 border-b border-white/8 bg-white/2 px-4 py-3">
+          <div
+            role="tablist"
+            aria-label="Exemplo de requisição e resposta"
+            class="flex items-center gap-1 border-b border-white/8 bg-white/2 px-4 py-3"
+          >
             <button
               data-tab-btn="request"
               type="button"
+              role="tab"
+              id="tab-request"
+              aria-controls="painel-request"
+              aria-selected="true"
               class="tab rounded-full px-3.5 py-1.5 font-mono text-[0.6875rem] tracking-wider transition-colors duration-300"
             >
               REQUEST
@@ -69,6 +77,10 @@ function tone(line: string, kind: 'request' | 'response') {
             <button
               data-tab-btn="response"
               type="button"
+              role="tab"
+              id="tab-response"
+              aria-controls="painel-response"
+              aria-selected="false"
               class="tab rounded-full px-3.5 py-1.5 font-mono text-[0.6875rem] tracking-wider transition-colors duration-300"
             >
               RESPONSE
@@ -80,6 +92,10 @@ function tone(line: string, kind: 'request' | 'response') {
 
           <div
             data-tab-panel="request"
+            id="painel-request"
+            role="tabpanel"
+            aria-labelledby="tab-request"
+            tabindex="0"
             class="overflow-x-auto p-5 font-mono text-[0.78125rem] leading-[1.75] lg:p-6"
           >
             {
@@ -93,6 +109,10 @@ function tone(line: string, kind: 'request' | 'response') {
 
           <div
             data-tab-panel="response"
+            id="painel-response"
+            role="tabpanel"
+            aria-labelledby="tab-response"
+            tabindex="0"
             hidden
             class="overflow-x-auto p-5 font-mono text-[0.78125rem] leading-[1.75] lg:p-6"
           >

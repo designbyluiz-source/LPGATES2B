@@ -10,7 +10,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check:responsivo": "node scripts/check-responsivo.mjs"
+    "check:responsivo": "node scripts/check-responsivo.mjs",
+    "check:comportamento": "node scripts/check-comportamento.mjs",
+    "check": "npm run check:responsivo && npm run check:comportamento"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

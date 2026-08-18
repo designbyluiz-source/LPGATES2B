@@ -208,8 +208,11 @@
     white-space: nowrap;
     isolation: isolate;
     overflow: hidden;
-    transition: transform 0.4s var(--ease-brand), color 0.3s var(--ease-brand),
-      border-color 0.3s var(--ease-brand), background-color 0.3s var(--ease-brand);
+    /* transform fora da lista de propósito: nos botões com data-magnetic quem
+       controla o transform é o GSAP, e transicionar os dois ao mesmo tempo
+       deixa o movimento elástico e atrasado em relação ao cursor. */
+    transition: color 0.3s var(--ease-brand), border-color 0.3s var(--ease-brand),
+      background-color 0.3s var(--ease-brand);
   }
   .btn > * {
     position: relative;
@@ -293,8 +296,8 @@
       color-mix(in srgb, #fff 5%, transparent),
       color-mix(in srgb, #fff 1.5%, transparent)
     );
-    transition: border-color 0.5s var(--ease-brand), transform 0.5s var(--ease-brand),
-      background-color 0.5s var(--ease-brand);
+    /* sem transform: quem inclina os cards com data-tilt é o GSAP */
+    transition: border-color 0.5s var(--ease-brand), background-color 0.5s var(--ease-brand);
   }
   .card-dark:hover {
     border-color: color-mix(in srgb, var(--color-brand-300) 42%, transparent);
@@ -305,8 +308,8 @@
     border-radius: var(--radius-card);
     border: 1px solid var(--color-paper-300);
     background: #fff;
-    transition: border-color 0.5s var(--ease-brand), transform 0.5s var(--ease-brand),
-      box-shadow 0.5s var(--ease-brand);
+    /* sem transform: quem inclina os cards com data-tilt é o GSAP */
+    transition: border-color 0.5s var(--ease-brand), box-shadow 0.5s var(--ease-brand);
   }
   .card-light:hover {
     border-color: var(--color-brand-300);

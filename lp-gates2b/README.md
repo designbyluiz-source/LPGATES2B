@@ -27,11 +27,18 @@ npm run check                        # roda os dois abaixo
 **`npm run check:responsivo`** — 11 larguras, de 320 a 1920 px. Falha se
 encontrar estouro horizontal, texto abaixo de 11 px ou erro de console.
 
-**`npm run check:comportamento`** — 23 asserções de interação: menu mobile como
+**`npm run check:comportamento`** — 29 asserções de interação: menu mobile como
 diálogo (foco entra, Tab circula, ESC devolve o foco, fundo travado), âncoras,
 tabs por teclado, resize entre desktop e mobile na seção pinada, deep link,
-timers que precisam parar fora da tela e scroll rápido de ida e volta.
+timers que precisam parar fora da tela, scroll rápido de ida e volta e
+**estabilidade de altura com a página parada no fim**.
 Cada asserção nasceu de um bug real; os comentários no script dizem qual.
+
+Sobre a última: nenhuma animação pode mudar a altura de nada depois da carga.
+As linhas do terminal nasciam vazias (altura zero) e cresciam ao serem
+digitadas — 200 px de crescimento. Quem já estava no fim da página via o
+documento crescer por baixo de si e a página dar pequenos saltos para cima.
+O Lighthouse não pega isso: acontece fora da janela de medição do CLS.
 
 **Por que isso importa mais do que parece:** se qualquer elemento for mais
 largo que a viewport, o Safari no iOS não mostra barra de rolagem horizontal —

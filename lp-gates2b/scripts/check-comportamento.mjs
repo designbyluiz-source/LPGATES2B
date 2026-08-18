@@ -303,6 +303,69 @@ await bloco('scroll rápido', async () => {
   await ctx.close();
 });
 
+/* ═════════════════════ 8. LAYOUT ESTÁVEL NO FIM DA PÁGINA ═════════════════════ */
+await bloco('altura estável no fim', async () => {
+  // BUG ORIGINAL: as linhas do terminal nasciam com altura zero e cresciam ao
+  // serem digitadas — ~200 px de crescimento. Quem já estava no fim da página
+  // via o documento crescer por baixo e a página dar pequenos saltos para cima.
+  // Vale para qualquer animação: nada pode mudar de altura depois da carga.
+  for (const [w, h] of [
+    [1920, 1080],
+    [1440, 900],
+    [390, 844],
+  ]) {
+    const mobile = w < 1024;
+    const ctx = await browser.newContext({
+      viewport: { width: w, height: h },
+      isMobile: mobile,
+      hasTouch: mobile,
+      deviceScaleFactor: mobile ? 2 : 1,
+    });
+    const p = await ctx.newPage();
+    await p.goto(URL, { waitUntil: 'networkidle' });
+    await p.waitForTimeout(3500);
+    await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await p.waitForTimeout(600);
+
+    const r = await p.evaluate(async () => {
+      const alvos = [...document.querySelectorAll('main section, footer, [data-terminal], [data-stream]')];
+      const nomes = alvos.map(
+        (el) => el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (el.dataset.terminal !== undefined ? '[terminal]' : '') + (el.dataset.stream !== undefined ? '[stream]' : '')
+      );
+      let base = alvos.map((el) => Math.round(el.getBoundingClientRect().height));
+      let docMin = document.documentElement.scrollHeight;
+      let docMax = docMin;
+      const mudou = new Set();
+      for (let i = 0; i < 50; i++) {
+        await new Promise((r) => setTimeout(r, 140));
+        const d = document.documentElement.scrollHeight;
+        docMin = Math.min(docMin, d);
+        docMax = Math.max(docMax, d);
+        alvos.forEach((el, idx) => {
+          const hh = Math.round(el.getBoundingClientRect().height);
+          if (Math.abs(hh - base[idx]) > 1) {
+            mudou.add(nomes[idx]);
+            base[idx] = hh;
+          }
+        });
+      }
+      return { crescimento: docMax - docMin, mudou: [...mudou] };
+    });
+
+    afirma(
+      `documento não muda de altura com a página no fim (${w}px)`,
+      r.crescimento === 0,
+      `${r.crescimento}px de variação`
+    );
+    afirma(
+      `nenhuma seção muda de altura com a página no fim (${w}px)`,
+      r.mudou.length === 0,
+      r.mudou.join(', ')
+    );
+    await ctx.close();
+  }
+});
+
 await browser.close();
 
 const falhas = resultados.filter((r) => !r.passou);

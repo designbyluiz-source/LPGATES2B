@@ -55,7 +55,19 @@ import { devIA as c } from '../../data/content';
                 ]}
               >
                 {line.prompt && <span class="shrink-0 text-brand-400">$</span>}
-                <span data-terminal-text>{line.text}</span>
+                {/* Duas cópias sobrepostas na mesma célula de grid. A invisível
+                    reserva a altura final da linha (com a quebra que ela teria);
+                    a visível é esvaziada pelo JS e preenchida letra por letra.
+                    Sem essa reserva, cada linha nasce com altura zero e o
+                    terminal cresce ~200px enquanto digita — e se o visitante já
+                    estiver no fim da página, o documento cresce debaixo dele e a
+                    página parece dar pequenos saltos para cima. */}
+                <span class="grid min-w-0 flex-1">
+                  <span aria-hidden="true" class="invisible col-start-1 row-start-1">
+                    {line.text}
+                  </span>
+                  <span data-terminal-text class="col-start-1 row-start-1">{line.text}</span>
+                </span>
               </div>
             ))
           }

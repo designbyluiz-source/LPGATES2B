@@ -690,6 +690,19 @@ function initStream() {
     let entrou = false;
     let timer = null;
 
+    // A rotação colapsa a altura de uma linha por ciclo. Sem reservar a altura
+    // do container, tudo o que vem abaixo na página sobe e desce junto.
+    const reservarAltura = () => {
+      stream.style.minHeight = '';
+      stream.style.minHeight = `${stream.offsetHeight}px`;
+    };
+    reservarAltura();
+    let rAlturaTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(rAlturaTimer);
+      rAlturaTimer = setTimeout(reservarAltura, 200);
+    });
+
     const cycle = () => {
       const first = stream.querySelector('[data-stream-row]');
       if (!first) return;
